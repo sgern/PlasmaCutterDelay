@@ -1,12 +1,12 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class PlasmaCutterDelay {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		Scanner in = new Scanner(System.in);
 		System.out.print("File: ");
@@ -17,31 +17,31 @@ public class PlasmaCutterDelay {
 		int delay = in.nextInt();
 		in.close();
 		BufferedReader inputStream = null;
-		BufferedWriter outputStream = null;
+		PrintWriter outputStream = null;
 
 		try {
 			inputStream = new BufferedReader(new FileReader(file));
-			outputStream = new BufferedWriter(new FileWriter(file + "Delay"));
+			StringBuilder sb = new StringBuilder(file);
+			sb.delete(file.length()-4, file.length());
+			file = sb.toString();
+			outputStream = new PrintWriter(new FileWriter(file + "Delay.tap"));
 
 			String l;
 			int count = 0;
 			while ((l = inputStream.readLine()) != null) {
-				outputStream.write(l);
+				outputStream.println(l);
 				if (count == lines) {
-					outputStream.write("\nGo4 " + delay);
+					outputStream.println("G04 " + delay);
 					count = 0;
 				} else
 					count++;
 			}
+		} finally {
 			if (inputStream != null)
 				inputStream.close();
 			if (outputStream != null)
 				outputStream.close();
 			System.out.print("Done.");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
 		}
 	}
 }
